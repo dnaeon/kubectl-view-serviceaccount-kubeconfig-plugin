@@ -164,6 +164,7 @@ func (o *ViewServiceaccountKubeconfigOptions) Run() error {
 		namespace          string
 		token              string
 		caCrt              []byte
+		caCrtFile          string
 	)
 
 	// We expect the serviceaccount bound token can be read from the stdin
@@ -185,6 +186,7 @@ func (o *ViewServiceaccountKubeconfigOptions) Run() error {
 
 		// We get CA certificate data from the kubeconfig file
 		caCrt = rawConfig.Clusters[cluster].CertificateAuthorityData
+		caCrtFile = rawConfig.Clusters[cluster].CertificateAuthority
 	} else {
 		restConfig, err := o.configFlags.ToRESTConfig()
 		if err != nil {
@@ -210,6 +212,7 @@ func (o *ViewServiceaccountKubeconfigOptions) Run() error {
 		Clusters: map[string]*clientcmdapi.Cluster{
 			cluster: {
 				Server:                   server,
+				CertificateAuthority:     caCrtFile,
 				CertificateAuthorityData: caCrt,
 			},
 		},
